@@ -29,6 +29,7 @@ namespace NC2
 
             string filenameOut = Console.ReadLine();
             filenameOut = (String.IsNullOrEmpty(filenameOut)) ? "GPSoutput" :  filenameOut;
+            
             int i = 0;
             while (File.Exists(Path.Combine(path, filenameOut+".csv")))
             {
