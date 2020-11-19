@@ -74,15 +74,32 @@ namespace NC2
                         string edited;
                         int commaIndex = 0;
                         float coord = 0;
-                        //string coordString = "tet";
-                        string edited2;
+                        string coordString;
+                        
 
                         edited=line.Insert(14, ":");
                         edited=edited.Insert(17, ":");
+                        edited=edited.Replace(',',';');
 
-                        commaIndex = getNthIndex(edited,',',3);
-                        edited.
-                        outputFile.WriteLine(edited);
+                        commaIndex = getNthIndex(edited,';',3);
+                        coordString=edited.Substring(commaIndex+1,11);
+                        if(coordString[1]!=';')
+                        {
+                            coordString=coordString.Replace('.',',');
+                            coord=float.Parse(coordString.Substring(0,2));
+                            coord+=float.Parse(coordString.Substring(2))/60;
+                            edited = edited.Replace(coordString.Replace(',','.'), coord.ToString());
+
+
+                            commaIndex = getNthIndex(edited,';',6);
+                            coordString=edited.Substring(commaIndex+1,12);
+                            coordString=coordString.Replace('.',',');
+                            coord=float.Parse(coordString.Substring(0,3));
+                            coord+=float.Parse(coordString.Substring(3))/60;
+                            edited = edited.Replace(coordString.Replace(',','.'), coord.ToString());
+
+                            outputFile.WriteLine(edited);
+                        }
                     }
                 }
                 Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
