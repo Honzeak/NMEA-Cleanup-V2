@@ -85,18 +85,20 @@ namespace NC2
                         coordString=edited.Substring(commaIndex+1,11);
                         if(coordString[1]!=';')
                         {
-                            coordString=coordString.Replace('.',',');
+                            //coordString=coordString.Replace('.',',');
                             coord=float.Parse(coordString.Substring(0,2));
                             coord+=float.Parse(coordString.Substring(2))/60;
-                            edited = edited.Replace(coordString.Replace(',','.'), coord.ToString());
+                            edited = edited.Replace(coordString, coord.ToString());
 
 
-                            commaIndex = getNthIndex(edited,';',6);
+                            commaIndex = getNthIndex(edited,';',5);
                             coordString=edited.Substring(commaIndex+1,12);
-                            coordString=coordString.Replace('.',',');
+                            //coordString=coordString.Replace('.',',');
+                            Console.WriteLine(coordString.Substring(0,3));
                             coord=float.Parse(coordString.Substring(0,3));
-                            coord+=float.Parse(coordString.Substring(3))/60;
-                            edited = edited.Replace(coordString.Replace(',','.'), coord.ToString());
+                            Console.WriteLine(float.Parse(coordString.Substring(3)));
+                            coord+=(float.Parse(coordString.Substring(3))/60);
+                            edited = edited.Replace(coordString, coord.ToString());
 
                             outputFile.WriteLine(edited);
                         }
