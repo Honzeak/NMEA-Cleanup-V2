@@ -9,6 +9,18 @@ namespace NC2
 {
     class Program
     {
+        static int getNthIndex(string s, char c, int noc)
+        {
+            int count = 0;
+            for(int i=0;i<s.Length;i++)
+            {
+                if(s[i]==c)
+                    count++;
+                if(count==noc)
+                    return i;
+            }
+            return -1;
+        }
         static void Main(string[] args)
         {
            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
@@ -60,14 +72,37 @@ namespace NC2
                     if (line.StartsWith("NMEA,$GPGGA")|| line.StartsWith("NMEA,$GLGGA")|| line.StartsWith("NMEA,$GNGGA"))
                     {
                         string edited;
+                        int commaIndex = 0;
+                        float coord = 0;
+                        string coordString;
+                        
 
                         edited=line.Insert(14, ":");
                         edited=edited.Insert(17, ":");
-                        outputFile.WriteLine(edited);
-                        //index prvniho cisla je 17
-                        //izolovat cislo
-                        //upravit cislo
-                        //prepsat cislo
+                        edited=edited.Replace(',',';');
+
+                        commaIndex = getNthIndex(edited,';',3);
+                        coordString=edited.Substring(commaIndex+1,11);
+                        if(coordString[1]!=';')
+                        {
+                            //coordString=coordString.Replace('.',',');
+                            coord=float.Parse(coordString.Substring(0,2));
+                            coord+=float.Parse(coordString.Substring(2))/60;
+                            edited = edited.Replace(coordString, coord.ToString());
+
+
+                            commaIndex = getNthIndex(edited,';',5);
+                            coordString=edited.Substring(commaIndex+1,12);
+                            //coordString=coordString.Replace('.',',');
+                            Console.WriteLine(coordString.Substring(0,3));
+                            coord=float.Parse(coordString.Substring(0,3));
+                            Console.WriteLine(float.Parse(coordString.Substring(3)));
+                            coord+=(float.Parse(coordString.Substring(3))/60);
+                            edited = edited.Replace(coordString, coord.ToString());
+
+                            
+                            
+                        }
                     }
                 }
                 Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");

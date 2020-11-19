@@ -9,3 +9,5 @@ C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.AssemblyInfoInputs.c
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.AssemblyInfo.cs
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.dll
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.pdb
+C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.csproj.CoreCompileInputs.cache
+C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.genruntimeconfig.cache
