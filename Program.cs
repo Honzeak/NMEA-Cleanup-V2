@@ -100,7 +100,8 @@ namespace NC2
                             coord+=(float.Parse(coordString.Substring(3))/60);
                             edited = edited.Replace(coordString, coord.ToString());
 
-                            outputFile.WriteLine(edited);
+                            
+                            
                         }
                     }
                 }
