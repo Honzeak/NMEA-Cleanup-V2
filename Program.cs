@@ -67,19 +67,33 @@ namespace NC2
             {
                 outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
 
+            int nmeaAttIndex=0;
+            string nmeaAttStr = "";
+            int nmeaAttComma = 0;
+
+            if(lines[50].Substring(0,4)=="NMEA")
+            {
+                nmeaAttIndex = 5;
+                nmeaAttStr = "NMEA,";
+                nmeaAttComma = 1;
+            }
+
                 foreach (string line in lines)
                 {
-                    if (line.StartsWith("NMEA,$GPGGA")|| line.StartsWith("NMEA,$GLGGA")|| line.StartsWith("NMEA,$GNGGA"))
+                    
+                    if (line.StartsWith(nmeaAttStr+"$GPGGA")|| line.StartsWith(nmeaAttStr+"$GLGGA")|| line.StartsWith(nmeaAttStr+"$GNGGA"))
                     {
                         string edited;
                         int commaIndex = 0;
                         float coord = 0;
                         string coordString;
                         
-
-                        edited=line.Insert(14, ":");
-                        edited=edited.Insert(17, ":");
-                        edited=edited.Replace(',',';');
+                        edited=line.Replace(',',';');
+                        
+                        if(line[7]==';')
+                            continue;
+                        edited=line.Insert(getNthIndex(line,';',1+nmeaAttComma)+3, ":");
+                        edited=edited.Insert(getNthIndex(line,';',1+nmeaAttComma)+5, ":");
 
                         commaIndex = getNthIndex(edited,';',3);
                         coordString=edited.Substring(commaIndex+1,11);
@@ -94,7 +108,6 @@ namespace NC2
                             commaIndex = getNthIndex(edited,';',5);
                             coordString=edited.Substring(commaIndex+1,12);
                             //coordString=coordString.Replace('.',',');
-                            Console.WriteLine(coordString.Substring(0,3));
                             coord=float.Parse(coordString.Substring(0,3));
                             Console.WriteLine(float.Parse(coordString.Substring(3)));
                             coord+=(float.Parse(coordString.Substring(3))/60);
@@ -105,6 +118,48 @@ namespace NC2
                         }
                     }
                 }
+
+                foreach (string line in lines)
+                {
+                    string edited;
+                    string stamp;
+                    int commaIndex = 0;
+                    float coord = 0;
+                    string coordString;
+
+                    if (line.StartsWith(nmeaAttStr+"$GPGGA")|| line.StartsWith(nmeaAttStr+"$GLGGA")|| line.StartsWith(nmeaAttStr+"$GNGGA"))
+                    {
+                        if(line[7+nmeaAttIndex]==',')
+                            continue;
+                        edited=line.Insert(9+nmeaAttIndex, ":");
+                        edited=edited.Insert(12+nmeaAttIndex, ":");
+                        
+                        stamp=edited.Substring(nmeaAttIndex+7,9);
+
+                        commaIndex = getNthIndex(edited,';',3);
+                        coordString=edited.Substring(commaIndex+1,11);
+                        if(coordString[1]!=';')
+                        {
+                            //coordString=coordString.Replace('.',',');
+                            coord=float.Parse(coordString.Substring(0,2));
+                            coord+=float.Parse(coordString.Substring(2))/60;
+                            edited = edited.Replace(coordString, coord.ToString());
+
+
+                            commaIndex = getNthIndex(edited,';',5);
+                            coordString=edited.Substring(commaIndex+1,12);
+                            //coordString=coordString.Replace('.',',');
+                            coord=float.Parse(coordString.Substring(0,3));
+                            Console.WriteLine(float.Parse(coordString.Substring(3)));
+                            coord+=(float.Parse(coordString.Substring(3))/60);
+                            edited = edited.Replace(coordString, coord.ToString());
+
+                            
+                            
+                        }
+                    }
+                }
+
                 Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
 
             }

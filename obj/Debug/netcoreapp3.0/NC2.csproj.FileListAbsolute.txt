@@ -11,3 +11,16 @@ C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.dll
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.pdb
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.csproj.CoreCompileInputs.cache
 C:\Users\0erto\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.genruntimeconfig.cache
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.exe
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.deps.json
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.runtimeconfig.json
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.runtimeconfig.dev.json
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.dll
+C:\Users\Honizk\source\repos\NC2\bin\Debug\netcoreapp3.0\NC2.pdb
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.csprojAssemblyReference.cache
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.AssemblyInfoInputs.cache
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.AssemblyInfo.cs
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.csproj.CoreCompileInputs.cache
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.dll
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.pdb
+C:\Users\Honizk\source\repos\NC2\obj\Debug\netcoreapp3.0\NC2.genruntimeconfig.cache
