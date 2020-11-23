@@ -21,7 +21,7 @@ namespace NC2
             }
             return -1;
         }
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
 
@@ -75,7 +75,8 @@ namespace NC2
                         int commaIndex = 0;
                         float coord = 0;
                         string coordString;
-                        
+                        float result;
+
 
                         edited=line.Insert(14, ":");
                         edited=edited.Insert(17, ":");
@@ -87,7 +88,14 @@ namespace NC2
                         {
                             //coordString=coordString.Replace('.',',');
                             coord=float.Parse(coordString.Substring(0,2));
-                            coord+=float.Parse(coordString.Substring(2))/60;
+                            if(!float.TryParse(coordString.Substring(2), out result))
+                            {
+                                if(!float.TryParse(coordString.Substring(2).Replace('.',','), out result))
+                                    return -1;
+                            }
+
+                            coord+=(result/60);
+
                             edited = edited.Replace(coordString, coord.ToString());
 
 
@@ -96,11 +104,18 @@ namespace NC2
                             //coordString=coordString.Replace('.',',');
                             Console.WriteLine(coordString.Substring(0,3));
                             coord=float.Parse(coordString.Substring(0,3));
-                            Console.WriteLine(float.Parse(coordString.Substring(3)));
-                            coord+=(float.Parse(coordString.Substring(3))/60);
+                            //Console.WriteLine(float.Parse(coordString.Substring(3)));
+                            //coord=(float.Parse(coordString.Substring(3))/60);
+                            
+                            if(!float.TryParse(coordString.Substring(3), out result))
+                            {
+                                if(!float.TryParse(coordString.Substring(3).Replace('.',','), out result))
+                                    return -1;
+                            }
+                            coord+=(result/60);
                             edited = edited.Replace(coordString, coord.ToString());
 
-                            
+                            outputFile.WriteLine(edited);
                             
                         }
                     }
@@ -111,6 +126,9 @@ namespace NC2
 
             Console.WriteLine("\nPro ukonceni programu stiskni enter...");
             Console.ReadLine();
+            return 1;
+
+
         }
     }
 }
