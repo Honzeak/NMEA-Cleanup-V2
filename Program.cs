@@ -23,25 +23,30 @@ namespace NC2
         }
         static void Main(string[] args)
         {
+            //Define path to program directory
            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
-
+            //Define root path
             path = path.Substring(6);
 
             Console.WriteLine("Ahoj, napis prosim nazev souboru s neopracovanymi GPS daty (i s priponou).\nNazev souboru musi byt ve stejnem adresari jako je tento program.\n\nNazev souboru:");
-
+            //Get the input file name
             string filenameIn = Console.ReadLine();
 
+            //Chybova hlaska
             while (!File.Exists(Path.Combine(path, filenameIn)))
             {
                 Console.WriteLine("Program nemuze najit soubor. Ujisti se ze jsi zadal nazev souboru spravne (s priponou) a ze je ve stejne slozce jako tento program.\nZkus napsat nazev souboru znovu:");
                 filenameIn = Console.ReadLine();
             }
 
+            //Get the output name
             Console.WriteLine("Nyni napis nazev vystupniho souboru (bez pripony, bude to .csv) a nebo jenom zmackni enter:");
-
             string filenameOut = Console.ReadLine();
+
+            //Automatic file name if not specified
             filenameOut = (String.IsNullOrEmpty(filenameOut)) ? "GPSoutput" :  filenameOut;
             
+            //Automatic file name index
             int i = 0;
             while (File.Exists(Path.Combine(path, filenameOut+".csv")))
             {
@@ -57,20 +62,24 @@ namespace NC2
                 }
             }
 
+            //Add file extension
             filenameOut += ".csv";
             
+            //Read input file contents
             string[] lines = File.ReadAllLines(Path.Combine(path, filenameIn));
             int linesCount = lines.GetLength(0);
 
-
+            //Filter and write files
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(path, filenameOut)))
             {
                 outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
 
+                //Attrifutes format variables
                 int nmeaAttIndex=0;
                 string nmeaAttStr = "";
                 int nmeaAttComma = 0;
 
+                //Check attributes format
                 if(lines[50].Substring(0,4)=="NMEA")
                 {
                     nmeaAttIndex = 5;
@@ -100,6 +109,7 @@ namespace NC2
                             if(coordString[1]!=';')
                             {
                                 //coordString=coordString.Replace('.',',');
+                                Console.WriteLine(coordString.Substring(0,2));
                                 coord=float.Parse(coordString.Substring(0,2));
                                 coord+=float.Parse(coordString.Substring(2))/60;
                                 edited = edited.Replace(coordString, coord.ToString());
