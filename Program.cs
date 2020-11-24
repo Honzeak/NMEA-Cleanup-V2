@@ -100,7 +100,7 @@ namespace NC2
                 outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
 
                 //Attrifutes format variables
-                int nmeaAttIndex=0;
+                int nmeaAttLen=0;
                 string nmeaAttStr = "";
                 int nmeaAtt = 0;
 
@@ -108,93 +108,130 @@ namespace NC2
                 if(lines[50].Substring(0,4)=="NMEA")
                 {
                     nmeaAttStr = "NMEA,";
-                    nmeaAttIndex = nmeaAttStr.Length;
+                    nmeaAttLen = nmeaAttStr.Length;
                     nmeaAtt = 1;
                 }
 
-                    foreach (string line in lines)
+                //Timestamp generation variable
+                bool time = false;
+
+                string timeStamp="";
+
+                var gsvLines = new List<string>();
+
+                foreach (string line in lines)
+                {                 
+                    string edited;
+
+                    //Detect the GGA messages
+                    if (line.StartsWith(nmeaAttStr+"$GPGGA")|| line.StartsWith(nmeaAttStr+"$GLGGA")|| line.StartsWith(nmeaAttStr+"$GNGGA"))
                     {
-                        //Detect the GGA messages
-                        if (line.StartsWith(nmeaAttStr+"$GPGGA")|| line.StartsWith(nmeaAttStr+"$GLGGA")|| line.StartsWith(nmeaAttStr+"$GNGGA"))
+
+                        //Discard an empty message
+                        if(checkForMissingData(line,',')){continue;}
+
+                        //We now have valid timestamp
+                        time = true;
+                        
+                        int coordCommaIndex = 0;
+                        float coord = 0;
+                        string coordString;
+                        float result;
+                        
+                        //Replace commas to make working with decimal separators easier
+                        edited=line.Replace(',',';');
+                        
+                        
+
+                        //Improve readability of the timestamp attribute
+                        int timeIndex = getNthIndex(edited,';',1+nmeaAtt);
+                        edited=edited.Insert(timeIndex+3, ":");
+                        edited=edited.Insert(timeIndex+6, ":");
+
+                        //Get timestamp of the sentence
+                        timeStamp = edited.Substring(timeIndex+1,11);
+
+
+                        ///LATITUDE
+
+
+                        //Get the 3rd (latitude) attribute
+                        coordCommaIndex = getNthIndex(edited,';',2+nmeaAtt);
+                        coordString=edited.Substring(coordCommaIndex+1,11);
+
+                        //Get the deg. part of coordinate
+                        coord=float.Parse(coordString.Substring(0,2));
+
+                        //Get the minute part of coordinate
+                        if(!float.TryParse(coordString.Substring(2), out result))
                         {
-                            string edited;
-                            int coordCommaIndex = 0;
-                            float coord = 0;
-                            string coordString;
-                            float result;
-                            
-                            //Replace commas to make working with decimal separators easier
-                            edited=line.Replace(',',';');
-                            
-                            //Discard empty messages
-                            if(checkForMissingData(edited,';')){continue;}
-
-                            //Improve readability of the timestamp attribute
-                            edited=edited.Insert(getNthIndex(edited,';',1+nmeaAtt)+3, ":");
-                            edited=edited.Insert(getNthIndex(edited,';',1+nmeaAtt)+6, ":");
-
-
-                            ///LATITUDE
-
-
-                            //Get the 3rd (latitude) attribute
-                            coordCommaIndex = getNthIndex(edited,';',2+nmeaAtt);
-                            coordString=edited.Substring(coordCommaIndex+1,11);
-
-                            //Get the deg. part of coordinate
-                            coord=float.Parse(coordString.Substring(0,2));
-
-                            //Get the minute part of coordinate
-                            if(!float.TryParse(coordString.Substring(2), out result))
-                            {
-                                if(!float.TryParse(coordString.Substring(2).Replace('.',','), out result))
-                                    return -1;
-                            }
-
-                            //Convert minutes to degrees and add to the deg. part
-                            coord+=(result/60);
-
-                            //Replace the non-converted string
-                            edited = edited.Replace(coordString, coord.ToString());
-
-
-                            ///LONGITUDE
-
-
-                            //Get the 5th attribute (longitude) index location
-                            coordCommaIndex = getNthIndex(edited,';',4+nmeaAtt);
-                            //Isolate the attribute
-                            coordString=edited.Substring(coordCommaIndex+1,12);
-                            
-                            //Get the deg. part of coordinate
-                            coord=float.Parse(coordString.Substring(0,3));
-                            
-                            //Get the minute part of coordinate
-                            if(!float.TryParse(coordString.Substring(3), out result))
-                            {
-                                if(!float.TryParse(coordString.Substring(3).Replace('.',','), out result))
-                                    return -1;
-                            }
-
-                            //Convert minutes to degrees and add to the deg. part
-                            coord+=(result/60);
-
-                            //Replace the non-converted string
-                            edited = edited.Replace(coordString, coord.ToString());
-
-                            //Write into the output file
-                            outputFile.WriteLine(edited);
+                            if(!float.TryParse(coordString.Substring(2).Replace('.',','), out result))
+                                return -1;
                         }
 
-                        if (line.StartsWith(nmeaAttStr+"$GPGSV")|| line.StartsWith(nmeaAttStr+"$GLGSV")|| line.StartsWith(nmeaAttStr+"$GNGSV"))
-                        {
+                        //Convert minutes to degrees and add to the deg. part
+                        coord+=(result/60);
 
+                        //Replace the non-converted string
+                        edited = edited.Replace(coordString, coord.ToString());
+
+
+                        ///LONGITUDE
+
+
+                        //Get the 5th attribute (longitude) index location
+                        coordCommaIndex = getNthIndex(edited,';',4+nmeaAtt);
+                        //Isolate the attribute
+                        coordString=edited.Substring(coordCommaIndex+1,12);
+                        
+                        //Get the deg. part of coordinate
+                        coord=float.Parse(coordString.Substring(0,3));
+                        
+                        //Get the minute part of coordinate
+                        if(!float.TryParse(coordString.Substring(3), out result))
+                        {
+                            if(!float.TryParse(coordString.Substring(3).Replace('.',','), out result))
+                                return -1;
                         }
+
+                        //Convert minutes to degrees and add to the deg. part
+                        coord+=(result/60);
+
+                        //Replace the non-converted string
+                        edited = edited.Replace(coordString, coord.ToString());
+
+                        //Write into the output file
+                        outputFile.WriteLine(edited);
+                    }
+
+                    if (GSV&&time&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
+                    {
+                        int snrIndex;
+                        int tsInsertIndex;
+
+                        if(checkForMissingData(line,',')){continue;}
+
+                        edited=line.Replace(',',';');
+
+                        snrIndex = getNthIndex(edited,';',7+nmeaAtt);
+
+                        if(edited[snrIndex+1]==';'||edited[snrIndex+1]=='*'){continue;}
+
+                        tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
+                       
+                        edited=edited.Insert(tsInsertIndex+1,timeStamp+";");
+
+                        gsvLines.Add(edited);
 
                     }
+
+                }
+
+                gsvLines.ForEach(line => outputFile.WriteLine(line));
+
             }
 
-                Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
+            Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
 
             Console.WriteLine("\nPro ukonceni programu stiskni enter...");
             Console.ReadLine();
