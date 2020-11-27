@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\0erto\\source\\repos\\NC2\\NC2.csproj": {}
+    "C:\\Users\\Honizk\\source\\repos\\NC2\\NC2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\0erto\\source\\repos\\NC2\\NC2.csproj": {
+    "C:\\Users\\Honizk\\source\\repos\\NC2\\NC2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\0erto\\source\\repos\\NC2\\NC2.csproj",
+        "projectUniqueName": "C:\\Users\\Honizk\\source\\repos\\NC2\\NC2.csproj",
         "projectName": "NC2",
-        "projectPath": "C:\\Users\\0erto\\source\\repos\\NC2\\NC2.csproj",
-        "packagesPath": "C:\\Users\\0erto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\0erto\\source\\repos\\NC2\\obj\\",
+        "projectPath": "C:\\Users\\Honizk\\source\\repos\\NC2\\NC2.csproj",
+        "packagesPath": "C:\\Users\\Honizk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Honizk\\source\\repos\\NC2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\0erto\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Honizk\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"
