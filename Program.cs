@@ -7,59 +7,9 @@ using System.IO;
 
 namespace NC2
 {
-
-    class SNRFix:Program
-    {
-        public SNRFix(string gga)
-        {
-            gga=GGA;
-        }
-        string GGA;
-        private List<string> gsvs;
-        public List<string> Gsvs
-        {
-            get { return gsvs;}
-            set {gsvs = value;
-                 this.SNRs = new int[value.Count];
-                }
-        }
-
-        float SNR=0;
-
-        int[] SNRs;
-
-
-        public void avgSNR()
-        {
-            float avg;
-            avg=(float)this.SNRs.Average();
-            this.SNR=avg;
-        }
-        
-
-        public void ValuesToInt()//int[] SNRs)
-        {
-
-            int snrIndex = getNthIndex(this.Gsvs[0],';',7+nmeaAtt) + 1;
-        
-
-            for(int i=0;i<this.Gsvs.Count;i++)
-            {
-                int.TryParse(this.Gsvs[i].Substring(snrIndex,2), out this.SNRs[i]);
-            }
-
-        }
-
-        public string AppendGGA()
-        {
-            this.GGA=this.GGA.Insert(nmeaAttLen+19,this.SNR.ToString()+";");
-            return this.GGA;
-        }
-
-    }
     class Program
     {
-        protected static int getNthIndex(string s, char c, int noc)
+        static int getNthIndex(string s, char c, int noc)
         {
             int count = 0;
             for(int i=0;i<s.Length;i++)
@@ -83,15 +33,8 @@ namespace NC2
             }
             return false;
         }
-
-        protected static int nmeaAttLen=0;
-        protected static string nmeaAttStr = "";
-        protected static int nmeaAtt = 0;
-
         static int Main(string[] args)
         {
-
-            
            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
             //Define root path
             path = path.Substring(6);
@@ -157,7 +100,9 @@ namespace NC2
                 outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
 
                 //Attrifutes format variables
-                
+                int nmeaAttLen=0;
+                string nmeaAttStr = "";
+                int nmeaAtt = 0;
 
                 //Check attributes format
                 if(lines[50].Substring(0,4)=="NMEA")
@@ -172,8 +117,7 @@ namespace NC2
 
                 string timeStamp="";
 
-                
-                List<SNRFix> sNRFixes = new List<SNRFix>();
+                var gsvLines = new List<string>();
 
                 foreach (string line in lines)
                 {                 
@@ -256,14 +200,14 @@ namespace NC2
                         //Replace the non-converted string
                         edited = edited.Replace(coordString, coord.ToString());
 
-                        sNRFixes.Add(new SNRFix(edited));
-
+                        //Write into the output file
+                        outputFile.WriteLine(edited);
                     }
 
                     if (GSV&&time&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
                     {
                         int snrIndex;
-                        //int tsInsertIndex;
+                        int tsInsertIndex;
 
                         if(checkForMissingData(line,',')){continue;}
 
@@ -273,27 +217,17 @@ namespace NC2
 
                         if(edited[snrIndex+1]==';'||edited[snrIndex+1]=='*'){continue;}
 
-                        if(!sNRFixes.Any())
-                        {
-                            sNRFixes[sNRFixes.Count-1].Gsvs.Add(edited);
-                        }
-
-                        //tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
+                        tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
                        
-                        //edited=edited.Insert(tsInsertIndex+1,timeStamp+";");
+                        edited=edited.Insert(tsInsertIndex+1,timeStamp+";");
 
-                        
+                        gsvLines.Add(edited);
+
                     }
 
                 }
 
-                foreach(SNRFix sNRfix in sNRFixes)
-                {
-                    sNRfix.ValuesToInt();
-                    sNRfix.avgSNR();
-                    outputFile.WriteLine(sNRfix.AppendGGA());
-
-                }
+                gsvLines.ForEach(line => outputFile.WriteLine(line));
 
             }
 
