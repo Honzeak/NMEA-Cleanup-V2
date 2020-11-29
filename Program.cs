@@ -171,6 +171,7 @@ namespace NC2
                 {
                     legend=legend.Insert(getNthIndex(legend,',',3),", SNR");
                 }
+                legend = legend.Replace(',',';');
                 outputFile.WriteLine(legend);
 
                 //Attrifutes format variables
