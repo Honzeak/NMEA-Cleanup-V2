@@ -166,10 +166,11 @@ namespace NC2
                     nmeaAtt = 1;
                 }
 
-                string legend = "NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data";
+                string legend = "Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data";
+                legend = legend.Insert(0,nmeaAttStr);
                 if(GSV)
                 {
-                    legend=legend.Insert(getNthIndex(legend,',',3),", SNR");
+                    legend=legend.Insert(getNthIndex(legend,',',2+nmeaAtt),", SNR");
                 }
                 legend = legend.Replace(',',';');
                 outputFile.WriteLine(legend);
