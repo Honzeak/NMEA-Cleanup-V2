@@ -7,8 +7,6 @@ using System.IO;
 
 namespace NC2
 {
-<<<<<<< HEAD
-=======
 
     class SNRFix:Program
     {
@@ -62,7 +60,6 @@ namespace NC2
 
     }
 
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
     class Program
     {
         static int getNthIndex(string s, char c, int noc)
@@ -155,19 +152,7 @@ namespace NC2
             //Filter and write files
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(path, filenameOut)))
             {
-<<<<<<< HEAD
-                outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
-
-                //Attrifutes format variables
-                int nmeaAttLen=0;
-                string nmeaAttStr = "";
-                int nmeaAtt = 0;
-
-                //Check attributes format
-                if(lines[50].Substring(0,4)=="NMEA")
-=======
                 if(lines[linesCount-1].Substring(0,4)=="NMEA")
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                 {
                     nmeaAttStr = "NMEA,";
                     nmeaAttLen = nmeaAttStr.Length;
@@ -181,9 +166,6 @@ namespace NC2
                 }
                 outputFile.WriteLine(legend);
 
-<<<<<<< HEAD
-                var gsvLines = new List<string>();
-=======
                 //Attrifutes format variables
                 
 
@@ -191,7 +173,6 @@ namespace NC2
 
              
                 List<SNRFix> sNRFixes = new List<SNRFix>();
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
 
                 foreach (string line in lines)
                 {                 
@@ -268,10 +249,6 @@ namespace NC2
                         //Replace the non-converted string
                         edited = edited.Replace(coordString, coord.ToString());
 
-<<<<<<< HEAD
-                        //Write into the output file
-                        outputFile.WriteLine(edited);
-=======
                         if(GSV)
                         {
                             sNRFixes.Add(new SNRFix(edited));
@@ -281,7 +258,6 @@ namespace NC2
                             outputFile.WriteLine(edited);
                         }
 
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                     }
 
                     if (GSV&&sNRFixes.Any()&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
@@ -297,13 +273,9 @@ namespace NC2
 
                         if(edited[snrIndex+1]==';'||edited[snrIndex+1]=='*'){continue;}
 
-<<<<<<< HEAD
-                        tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
-=======
                         sNRFixes[sNRFixes.Count-1].Gsvs.Add(edited);
 
                         //tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                        
                         edited=edited.Insert(tsInsertIndex+1,timeStamp+";");
 
@@ -313,10 +285,6 @@ namespace NC2
 
                 }
 
-<<<<<<< HEAD
-                gsvLines.ForEach(line => outputFile.WriteLine(line));
-
-=======
                 if(GSV)
                 {
                     foreach(SNRFix sNRfix in sNRFixes)
@@ -326,7 +294,6 @@ namespace NC2
 
                     }
                 }
->>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
             }
 
             Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
