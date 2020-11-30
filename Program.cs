@@ -7,6 +7,62 @@ using System.IO;
 
 namespace NC2
 {
+<<<<<<< HEAD
+=======
+
+    class SNRFix:Program
+    {
+        string GGA;
+        public SNRFix(string gga)
+        {
+            GGA=gga;
+        }
+
+        List<string> gsvs=new List<string>();
+        public List<string> Gsvs
+        {
+            get { return gsvs;}
+            set {gsvs = value;}
+        }
+
+        int[] SNRs;
+
+        float SNR = 0;
+        public float avgSNR()
+        {
+            try
+            { 
+                SNR=(float)this.SNRs.Average();
+            }
+            catch{}
+            return this.SNR;
+        }
+        
+
+        public void ValuesToInt()//int[] SNRs)
+        {
+            if(!gsvs.Any()){return;}
+            SNRs = new int[this.gsvs.Count];
+
+            int snrIndex = getNthIndex(this.Gsvs[0],';',7+nmeaAtt) + 1;
+        
+
+            for(int i=0;i<this.Gsvs.Count;i++)
+            {
+                int.TryParse(this.Gsvs[i].Substring(snrIndex,2), out this.SNRs[i]);
+            }
+
+        }
+
+        public string AppendGGA()
+        {
+            this.GGA=this.GGA.Insert(nmeaAttLen+19,this.avgSNR().ToString()+";");
+            return this.GGA;
+        }
+
+    }
+
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
     class Program
     {
         static int getNthIndex(string s, char c, int noc)
@@ -44,7 +100,7 @@ namespace NC2
             string filenameIn = Console.ReadLine();
 
 
-            bool GSV = false;
+            
 
             //Chybova hlaska
             while (!File.Exists(Path.Combine(path, filenameIn)))
@@ -54,6 +110,8 @@ namespace NC2
             }
 
             Console.WriteLine("Budeš si přát vypsat i GSV zprávy (SNR data atd.)?\n(A/N):");
+
+            bool GSV = false;
 
             while(true)
             {
@@ -97,6 +155,7 @@ namespace NC2
             //Filter and write files
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(path, filenameOut)))
             {
+<<<<<<< HEAD
                 outputFile.WriteLine("NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data");
 
                 //Attrifutes format variables
@@ -106,18 +165,33 @@ namespace NC2
 
                 //Check attributes format
                 if(lines[50].Substring(0,4)=="NMEA")
+=======
+                if(lines[linesCount-1].Substring(0,4)=="NMEA")
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                 {
                     nmeaAttStr = "NMEA,";
                     nmeaAttLen = nmeaAttStr.Length;
                     nmeaAtt = 1;
                 }
 
-                //Timestamp generation variable
-                bool time = false;
+                string legend = "NMEA, Message ID, UTC of position fix, Latitude, Direction of latitude, Longitude, Direction of longitude, GPS Quality, Number of SVs in use (range from 00 through to 24+), HDOP, Orthometric height (MSL reference), unit of measure, Geoid separation, unit of measure, Age of differential GPS data record, checksum data";
+                if(GSV)
+                {
+                    legend.Insert(getNthIndex(legend,',',3),", SNR");
+                }
+                outputFile.WriteLine(legend);
 
-                string timeStamp="";
-
+<<<<<<< HEAD
                 var gsvLines = new List<string>();
+=======
+                //Attrifutes format variables
+                
+
+                //Check attributes format
+
+             
+                List<SNRFix> sNRFixes = new List<SNRFix>();
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
 
                 foreach (string line in lines)
                 {                 
@@ -129,9 +203,6 @@ namespace NC2
 
                         //Discard an empty message
                         if(checkForMissingData(line,',')){continue;}
-
-                        //We now have valid timestamp
-                        time = true;
                         
                         int coordCommaIndex = 0;
                         float coord = 0;
@@ -147,9 +218,6 @@ namespace NC2
                         int timeIndex = getNthIndex(edited,';',1+nmeaAtt);
                         edited=edited.Insert(timeIndex+3, ":");
                         edited=edited.Insert(timeIndex+6, ":");
-
-                        //Get timestamp of the sentence
-                        timeStamp = edited.Substring(timeIndex+1,11);
 
 
                         ///LATITUDE
@@ -200,11 +268,23 @@ namespace NC2
                         //Replace the non-converted string
                         edited = edited.Replace(coordString, coord.ToString());
 
+<<<<<<< HEAD
                         //Write into the output file
                         outputFile.WriteLine(edited);
+=======
+                        if(GSV)
+                        {
+                            sNRFixes.Add(new SNRFix(edited));
+                        }
+                        else
+                        {
+                            outputFile.WriteLine(edited);
+                        }
+
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                     }
 
-                    if (GSV&&time&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
+                    if (GSV&&sNRFixes.Any()&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
                     {
                         int snrIndex;
                         int tsInsertIndex;
@@ -217,7 +297,13 @@ namespace NC2
 
                         if(edited[snrIndex+1]==';'||edited[snrIndex+1]=='*'){continue;}
 
+<<<<<<< HEAD
                         tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
+=======
+                        sNRFixes[sNRFixes.Count-1].Gsvs.Add(edited);
+
+                        //tsInsertIndex = getNthIndex(edited,';',1+nmeaAtt);
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
                        
                         edited=edited.Insert(tsInsertIndex+1,timeStamp+";");
 
@@ -227,8 +313,20 @@ namespace NC2
 
                 }
 
+<<<<<<< HEAD
                 gsvLines.ForEach(line => outputFile.WriteLine(line));
 
+=======
+                if(GSV)
+                {
+                    foreach(SNRFix sNRfix in sNRFixes)
+                    {
+                        sNRfix.ValuesToInt();
+                        outputFile.WriteLine(sNRfix.AppendGGA());
+
+                    }
+                }
+>>>>>>> 155d9772c7a3b65ca048ee512417c2eab8bc0945
             }
 
             Console.WriteLine("Hotovo! Ocisteny soubor byl vytvoren.");
