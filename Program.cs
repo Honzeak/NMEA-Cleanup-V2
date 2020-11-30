@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -265,9 +265,9 @@ namespace NC2
                         else
                         {
                             outputFile.WriteLine(edited);
-                        }
+                            }
 
-                    }
+                            }
 
                     if (GSV&&sNRFixes.Any()&&(line.Substring(nmeaAttLen+3,3)=="GSV"))
                     {
