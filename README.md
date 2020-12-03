@@ -1,4 +1,4 @@
-# NC2
+# NMEA CLEANUP V2
 ## This console program is intended to be used for filtering NMEA messages from GNSS communication.
  The program gets a text file with all the messages and writes the selected NMEA messages to a separate CSV file.
 
